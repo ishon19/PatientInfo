@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/index.css"],"names":[],"mappings":"AAAA,MACE,mBACF,CAEA,GACE,YACF,CAEA,KACE,kBACF,CAEA,eACE,cAAe,CACf,kBACF","file":"main.4d9a26c5.chunk.css","sourcesContent":["table {\n  border: 0px solid black;\n}\n\ntd {\n  padding: 20px;\n}\n\n.imp {\n  font-weight: bolder;\n}\n\n.homeContainer {\n  padding: 1.5rem;\n  align-items: center;\n}\n"]}
