@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import server from "../services/serverService";
-import { Heading } from "@innovaccer/design-system";
 import MUIDataTable from "mui-datatables";
+import Home from "./Home";
+import PatientDetails from "./PatientDetails";
 
 const App = () => {
   const [patientData, setPatientData] = useState([]);
+  const [showDetails, setShowDetails] = useState(false);
+  const [patientDetails, setPatientDetails] = useState(null);
 
   const renderData = (data) => {
     /*return data.map((patient) => (
@@ -41,9 +44,25 @@ const App = () => {
           sort: true,
         },
       },
+      {
+        name: "id",
+        label: "ID",
+        options: {
+          display: "excluded",
+        },
+      },
     ];
 
-    const options = { filter: false, filterType: "checkbox", responsive: "standard" };
+    const options = {
+      filter: false,
+      filterType: "checkbox",
+      responsive: "standard",
+      selectablerows: true,
+      onRowClick: (rowData) => {
+        console.log("Row clicked", rowData);
+        fetchPatientDetail(rowData[4]);
+      },
+    };
 
     return (
       <MUIDataTable
@@ -66,23 +85,30 @@ const App = () => {
     });
   };
 
+  const fetchPatientDetail = (id) => {
+    server
+      .getPatientInfo(id)
+      .then((data) => {
+        setPatientDetails(data[0]);
+        setShowDetails(true);
+      })
+      .catch((error) => console.log("Some Error Occurred"));
+  };
+
   return (
     <div>
-      <header>
-        <Heading size="xl" appearance="default">
-          Patient Info App
-        </Heading>
-      </header>
-      <input type="file" onChange={onChangeHandler} />
-      <br />
-      <h2>Patient Details</h2>
-      <div>
-        {patientData.length > 0 ? (
-          renderData(patientData)
-        ) : (
-          <p>Please Upload the CSV/XLS File First</p>
-        )}
-      </div>
+      {showDetails ? (
+        <PatientDetails
+          patientDetail={patientDetails}
+          backButtonHandler={() => setShowDetails(false)}
+        />
+      ) : (
+        <Home
+          fileChangeHandler={onChangeHandler}
+          patientData={patientData}
+          dataRenderHandler={renderData}
+        />
+      )}
     </div>
   );
 };
