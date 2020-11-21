@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
@@ -73,7 +74,7 @@ app.post("/patients", fileUpload.single("Data"), (request, response) => {
   }
 });
 
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log("Server running at port", PORT);
 });
