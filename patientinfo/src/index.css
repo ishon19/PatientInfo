@@ -1,5 +1,5 @@
 table {
-  border: 1px solid black;
+  border: 0px solid black;
 }
 
 td {
@@ -10,6 +10,7 @@ td {
   font-weight: bolder;
 }
 
-.tableContainer {
+.homeContainer {
+  padding: 1.5rem;
   align-items: center;
 }

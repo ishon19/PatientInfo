@@ -3,11 +3,24 @@ import server from "../services/serverService";
 import MUIDataTable from "mui-datatables";
 import Home from "./Home";
 import PatientDetails from "./PatientDetails";
+import Notification from "./Notification";
+import Header from "./Header";
 
 const App = () => {
   const [patientData, setPatientData] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
   const [patientDetails, setPatientDetails] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [messageType, setMessageType] = useState(null);
+
+  const displayNotification = (message, type) => {
+    setMessage(message);
+    setMessageType(type);
+    setTimeout(() => {
+      setMessage(null);
+      setMessageType(null);
+    }, 1000);
+  };
 
   const renderData = (data) => {
     /*return data.map((patient) => (
@@ -79,10 +92,16 @@ const App = () => {
     console.log(event.target.files[0]);
     const formData = new FormData();
     formData.append("Data", event.target.files[0], event.target.files[0].name);
-    server.uploadPatientList(formData).then((csvData) => {
-      console.log(csvData);
-      setPatientData(csvData);
-    });
+    server
+      .uploadPatientList(formData)
+      .then((csvData) => {
+        console.log(csvData);
+        setPatientData(csvData);
+        displayNotification("Data Fetched Successfully", "success");
+      })
+      .catch((error) => {
+        displayNotification("Error Fetching Details from the server, Try again", "alert");
+      });
   };
 
   const fetchPatientDetail = (id) => {
@@ -91,23 +110,34 @@ const App = () => {
       .then((data) => {
         setPatientDetails(data[0]);
         setShowDetails(true);
+        displayNotification("Patient Details Fetched", "success");
       })
-      .catch((error) => console.log("Some Error Occurred"));
+      .catch((error) =>
+        displayNotification("Error Fetching Details from the server, Try again", "alert")
+      );
   };
 
   return (
     <div>
       {showDetails ? (
-        <PatientDetails
-          patientDetail={patientDetails}
-          backButtonHandler={() => setShowDetails(false)}
-        />
+        <>
+          <Header title="Patient Details" />
+          <Notification message={message} type={messageType} />
+          <PatientDetails
+            patientDetail={patientDetails}
+            backButtonHandler={() => setShowDetails(false)}
+          />
+        </>
       ) : (
-        <Home
-          fileChangeHandler={onChangeHandler}
-          patientData={patientData}
-          dataRenderHandler={renderData}
-        />
+        <>
+          <Header title="Patient Info Application" />
+          <Notification message={message} type={messageType} />
+          <Home
+            fileChangeHandler={onChangeHandler}
+            patientData={patientData}
+            dataRenderHandler={renderData}
+          />
+        </>
       )}
     </div>
   );
