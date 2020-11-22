@@ -109,28 +109,29 @@ app.post("/patients", fileUpload.single("Data"), (request, response, next) => {
       //response.status(200).json(sheetData);
       if (sheetData) {
         //clear the database before uploading data
-        Patient.remove({});
-        sheetData.forEach((patientObj, index, arr) => {
-          let patient = new Patient({
-            name: patientObj.name,
-            age: patientObj.age,
-            gender: patientObj.gender,
-            contact: patientObj.contact,
-            address: patientObj.address,
-          });
-
-          patient
-            .save()
-            .then((savedPatient) => {
-              console.log("Saved Patient: ", savedPatient);
-              if (index == arr.length - 1) {
-                response.status(200).json(sheetData);
-              }
-            })
-            .catch((error) => {
-              console.log("Error while saving");
-              next(error);
+        Patient.remove({}).then(() => {
+          sheetData.forEach((patientObj, index, arr) => {
+            let patient = new Patient({
+              name: patientObj.name,
+              age: patientObj.age,
+              gender: patientObj.gender,
+              contact: patientObj.contact,
+              address: patientObj.address,
             });
+
+            patient
+              .save()
+              .then((savedPatient) => {
+                console.log("Saved Patient: ", savedPatient);
+                if (index == arr.length - 1) {
+                  response.status(200).json(sheetData);
+                }
+              })
+              .catch((error) => {
+                console.log("Error while saving");
+                next(error);
+              });
+          });
         });
       } else {
         response.status(400).json({ error: "Something went wrong" });
