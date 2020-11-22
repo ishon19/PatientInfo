@@ -20,7 +20,7 @@ const patientSchema = mongoose.Schema({
   name: { type: String, required: true, minlength: 3 },
   age: {type: Number, required: true},
   gender: {type: String, required: true},
-  phone: { type: Number, required: true, minlength: 10, unique: true },
+  contact: { type: Number, required: true, minlength: 10, unique: true },
   address: {type: String, required: true}
 });
 
