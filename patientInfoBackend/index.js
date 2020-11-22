@@ -69,7 +69,7 @@ app.post("/patients", fileUpload.single("Data"), (request, response, next) => {
         response.status(200).json(rows); */
         if (rows) {
           //clear the database before uploading data
-          Patient.deleteMany({});
+          Patient.remove({});
           rows.forEach((patientObj, index, arr) => {
             let patient = new Patient({
               name: patientObj.name,
@@ -109,7 +109,7 @@ app.post("/patients", fileUpload.single("Data"), (request, response, next) => {
       //response.status(200).json(sheetData);
       if (sheetData) {
         //clear the database before uploading data
-        Patient.deleteMany({});
+        Patient.remove({});
         sheetData.forEach((patientObj, index, arr) => {
           let patient = new Patient({
             name: patientObj.name,
