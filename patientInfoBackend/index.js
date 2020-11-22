@@ -72,11 +72,11 @@ app.post("/patients", fileUpload.single("Data"), (request, response, next) => {
           Patient.deleteMany({});
           rows.forEach((patientObj, index, arr) => {
             let patient = new Patient({
-              name: patientObj?.name ?? "",
-              age: patientObj?.age ?? -1,
-              gender: patientObj?.gender ?? "",
-              contact: patientObj?.contact ?? 0,
-              address: patientObj?.address ?? "",
+              name: patientObj.name,
+              age: patientObj.age,
+              gender: patientObj.gender,
+              contact: patientObj.contact,
+              address: patientObj.address,
             });
 
             patient
@@ -112,11 +112,11 @@ app.post("/patients", fileUpload.single("Data"), (request, response, next) => {
         Patient.deleteMany({});
         sheetData.forEach((patientObj, index, arr) => {
           let patient = new Patient({
-            name: patientObj?.name ?? "",
-            age: patientObj?.age ?? -1,
-            gender: patientObj?.gender ?? "",
-            contact: patientObj?.contact ?? 0,
-            address: patientObj?.address ?? "",
+            name: patientObj.name,
+            age: patientObj.age,
+            gender: patientObj.gender,
+            contact: patientObj.contact,
+            address: patientObj.address,
           });
 
           patient
