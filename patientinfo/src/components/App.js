@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import server from "../services/serverService";
-import MUIDataTable from "mui-datatables";
 import Home from "./Home";
 import PatientDetails from "./PatientDetails";
 import Notification from "./Notification";
 import Header from "./Header";
+import PatientTable from "./PatientGrid";
 
 const App = () => {
   const [patientData, setPatientData] = useState([]);
@@ -12,6 +12,7 @@ const App = () => {
   const [patientDetails, setPatientDetails] = useState(null);
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const displayNotification = (message, type) => {
     setMessage(message);
@@ -23,99 +24,85 @@ const App = () => {
   };
 
   const renderData = (data) => {
-    /*return data.map((patient) => (
-      <p key={patient.contact}>
-        {patient.name} {patient.age} {patient.gender} {patient.contact}
-      </p>
-    )); */
-    let columns = [
-      {
-        name: "name",
-        label: "Name",
-        options: {
-          sort: true,
-        },
-      },
-      {
-        name: "age",
-        label: "Age",
-        options: {
-          sort: true,
-        },
-      },
-      {
-        name: "gender",
-        label: "Gender",
-        options: {
-          sort: true,
-        },
-      },
-      {
-        name: "contact",
-        label: "Contact",
-        options: {
-          sort: true,
-        },
-      },
-      {
-        name: "id",
-        label: "ID",
-        options: {
-          display: "excluded",
-        },
-      },
-    ];
-
-    const options = {
-      filter: false,
-      filterType: "checkbox",
-      responsive: "standard",
-      selectablerows: true,
-      onRowClick: (rowData) => {
-        console.log("Row clicked", rowData);
-        fetchPatientDetail(rowData[4]);
-      },
-    };
-
-    return (
-      <MUIDataTable
-        title="Patient List"
-        data={data}
-        columns={columns}
-        options={options}
-      />
-    );
+    return <PatientTable data={data} fetchPatientDetail={fetchPatientDetail} />;
   };
 
   const onChangeHandler = (event) => {
-    setPatientData([]);
     console.log(event.target.files[0]);
+
+    //check if the file types are csv/sheets
+    let fileName = event.target.files[0].name;
+    if (
+      !fileName.toLowerCase().includes("csv") &&
+      !fileName.toLowerCase().includes("xls")
+    ) {
+      displayNotification("Please select xls or csv files only!", "alert");
+      return;
+    }
+    setPatientData([]);
+    setShowSpinner(true);
     const formData = new FormData();
-    formData.append("Data", event.target.files[0], event.target.files[0].name);
+    formData.append("Data", event.target.files[0], fileName);
     server
       .uploadPatientList(formData)
       .then((csvData) => {
         console.log(csvData);
-        setPatientData(csvData);
+        server.getPatients().then((serverData) => {
+          if (serverData) {
+            setPatientData(serverData);
+            setShowSpinner(false);
+            displayNotification("Data Fetched from Database", "success");
+            event.target.value = null;
+          }
+        });
+        /* setPatientData(csvData);
         displayNotification("Data Fetched Successfully", "success");
+        event.target.value = null; */
       })
       .catch((error) => {
-        displayNotification("Error Fetching Details from the server, Try again", "alert");
+        console.error(error);
+        setShowSpinner(false);
+        displayNotification(`Error : ${error.response.data.error}`, "alert");
+        event.target.value = null;
       });
   };
 
   const fetchPatientDetail = (id) => {
+    setShowSpinner(true);
     server
       .getPatientInfo(id)
       .then((data) => {
-        setPatientDetails(data[0]);
+        setPatientDetails(data);
         setShowDetails(true);
+        setShowSpinner(false);
         displayNotification("Patient Details Fetched", "success");
       })
-      .catch((error) =>
-        displayNotification("Error Fetching Details from the server, Try again", "alert")
-      );
+      .catch((error) => {
+        console.error(error);
+        setShowSpinner(false);
+        displayNotification(
+          "Error Fetching Details from the server, Try again",
+          "alert"
+        );
+      });
   };
+
+  useEffect(() => {
+    setShowSpinner(true);
+    server
+      .getPatients()
+      .then((serverData) => {
+        if (serverData) {
+          setShowSpinner(false);
+          setPatientData(serverData);
+          displayNotification("Stored data loaded from database", "success");
+        }
+      })
+      .catch((error) => {
+        setShowSpinner(false);
+        displayNotification(`Error : ${error.response.data.error}`, "alert");
+      });
+  }, []);
 
   return (
     <div>
@@ -136,6 +123,7 @@ const App = () => {
             fileChangeHandler={onChangeHandler}
             patientData={patientData}
             dataRenderHandler={renderData}
+            showSpinner={showSpinner}
           />
         </>
       )}

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Toast } from "@innovaccer/design-system";
 import React from "react";
 

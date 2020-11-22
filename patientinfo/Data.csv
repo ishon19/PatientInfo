@@ -1,3 +1,4 @@
-name,age,gender,contact
-Shreyans,26,M,1234
-Shashwat,22,M,3456
+name|age|gender|contact|address
+Shreyans|26|Male|1234500000|Sector 137, Noida, IN
+Shashwat|22|Male|7568677856|Sector 37, Noida, IN
+Test|56|Female|6666555557|Lucknow, IN

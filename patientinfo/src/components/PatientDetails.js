@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Button, Card } from "@innovaccer/design-system";
 import React from "react";
 
