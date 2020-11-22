@@ -24,7 +24,7 @@ However, the static production build of the frontend project has been included i
 Once both the front end and backend apps are up and running without any errors, the app can be tested out from the browser. 
 
 ## **Important**
-- The application uses MongoDB Atlas for storing the data in the database and so you need to have MongoDB Atlas credentials and create a database there for storing the data. [Click here for more information](https://docs.atlas.mongodb.com/getting-started/). MONGODB_URI environment variable holds the connection string to the database. Please set it before using the application or set the `url` variable direcly in the `Patient.js`. Connection string looks like this: <br />
+- The application uses MongoDB Atlas for storing the data in the database and so you need to have MongoDB Atlas credentials and create a database there for storing the data. [Click here for more information](https://docs.atlas.mongodb.com/getting-started/). MONGODB_URI environment variable holds the connection string to the database. Please set it before using the application or set the `url` variable direcly in the `models/Patient.js` file of <b>patientInfoBackend</b> project. Connection string looks like this: <br />
 `mongodb+srv://${username}:${password}@cluster0.ecj5l.mongodb.net/${dbName}?retryWrites=true`
 
 - Use your credentials and database name in the connection string to use the application.
