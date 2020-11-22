@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 const url = process.env.MONGODB_URI;
-console.log("The connection URL is", url);
+//console.log("The connection URL is", url);
 
 mongoose
   .connect(url, {
@@ -11,7 +11,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then((response) => {
+  .then(() => {
     console.log("Connected to MongoDB");
   })
   .catch((error) => console.log("Error connecting to the database: ", error));
