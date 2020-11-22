@@ -68,29 +68,32 @@ app.post("/patients", fileUpload.single("Data"), (request, response, next) => {
         /* data = rows;
         response.status(200).json(rows); */
         if (rows) {
+          let toReturn = [];
           //clear the database before uploading data
-          Patient.remove({});
-          rows.forEach((patientObj, index, arr) => {
-            let patient = new Patient({
-              name: patientObj.name,
-              age: patientObj.age,
-              gender: patientObj.gender,
-              contact: patientObj.contact,
-              address: patientObj.address,
-            });
-
-            patient
-              .save()
-              .then((savedPatient) => {
-                console.log("Saved Patient: ", savedPatient);
-                if (index == arr.length - 1) {
-                  response.status(200).json(rows);
-                }
-              })
-              .catch((error) => {
-                console.log("Error while saving");
-                next(error);
+          Patient.remove({}).then(() => {
+            rows.forEach((patientObj, index, arr) => {
+              let patient = new Patient({
+                name: patientObj.name,
+                age: patientObj.age,
+                gender: patientObj.gender,
+                contact: patientObj.contact,
+                address: patientObj.address,
               });
+
+              patient
+                .save()
+                .then((savedPatient) => {
+                  console.log("Saved Patient: ", savedPatient.toJSON());
+                  toReturn.push(savedPatient.toJSON());
+                  if (index == arr.length - 1) {
+                    response.status(200).json(toReturn);
+                  }
+                })
+                .catch((error) => {
+                  console.log("Error while saving");
+                  next(error);
+                });
+            });
           });
         } else {
           response.status(400).json({ error: "Something went wrong" });
@@ -108,6 +111,7 @@ app.post("/patients", fileUpload.single("Data"), (request, response, next) => {
       //data = sheetData;
       //response.status(200).json(sheetData);
       if (sheetData) {
+        let toReturn = [];
         //clear the database before uploading data
         Patient.remove({}).then(() => {
           sheetData.forEach((patientObj, index, arr) => {
@@ -122,9 +126,10 @@ app.post("/patients", fileUpload.single("Data"), (request, response, next) => {
             patient
               .save()
               .then((savedPatient) => {
-                console.log("Saved Patient: ", savedPatient);
+                console.log("Saved Patient: ", savedPatient.toJSON());
+                toReturn.push(savedPatient.toJSON());
                 if (index == arr.length - 1) {
-                  response.status(200).json(sheetData);
+                  response.status(200).json(toReturn);
                 }
               })
               .catch((error) => {
